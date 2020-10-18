@@ -30,9 +30,9 @@ def fixHeaderBasedOnOneHotEncoding(header_list, feat_position,\
         categories_list):
 
     sorted_categories_list = sorted(categories_list)
-    new_header_list = header_list[:feat_position] +\
+    header_list = header_list[:feat_position] +\
             sorted_categories_list + header_list[feat_position+1:]
 
-    return new_header_list
+    return header_list
 
 
