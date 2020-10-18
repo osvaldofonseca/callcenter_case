@@ -58,13 +58,20 @@ def treatCategoricalBinaryFeatures(header, records_list):
     replace_mapping["celular"] = 1
     treatSpecificBinaryFeature(feat_name, header, records_list,\
             replace_mapping)
+    
+    # treat the feature "aderencia_campanha"
+    # feat_name = "aderencia_campanha"
+    # replace_mapping = dict()
+    # replace_mapping["nao"] = 0
+    # replace_mapping["sim"] = 1
+    # treatSpecificBinaryFeature(feat_name, header, records_list,\
+    #         replace_mapping)
 
 def getCategoriesByFeature():
 
     categories_by_feat = defaultdict(lambda: set())
     input_file = "data/callcenter_case_no-inadimplente_no-missing.csv"
     
-    records_list = []
     f_in = open(input_file, "r")
     header = f_in.readline().strip().split(",")
     for line in f_in:
@@ -108,43 +115,57 @@ def treatCategoricalFeatures(header, records_list):
     feat_name = "estado_civil"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    print(header)
-    print(len(header))
+    # print(header)
+    # print(len(header))
     
     # treat the feature "profissao"
     feat_name = "profissao"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    print(header)
-    print(len(header))
+    # print(header)
+    # print(len(header))
 
     # treat the feature "educacao"
     feat_name = "educacao"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    print(header)
-    print(len(header))
+    # print(header)
+    # print(len(header))
 
     # treat the feature "campanha_anterior"
     feat_name = "campanha_anterior"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    print(header)
-    print(len(header))
+    # print(header)
+    # print(len(header))
 
     # treat the feature "mes"
     feat_name = "mes"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    print(header)
-    print(len(header))
+    # print(header)
+    # print(len(header))
     
     # treat the feature "dia_da_semana"
     feat_name = "dia_da_semana"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    print(header)
-    print(len(header))
+    # print(header)
+    # print(len(header))
+
+    return (header, records_list)
+
+def dumpDatasetBasedOnTransformedRecords(output_file, header,\
+        records_list):
+    
+    f_out = open(output_file, "w")
+    str_line = ",".join(header) + "\n"
+    f_out.write(str_line)
+    for record in records_list:
+        str_record = [str(x) for x in record]
+        str_line = ",".join(str_record) + "\n"
+        f_out.write(str_line)
+    f_out.close()
 
 
 if __name__ == "__main__":
@@ -153,7 +174,8 @@ if __name__ == "__main__":
     treatCategoricalBinaryFeatures(header_, records_list_)
     feat_name = "estado_civil"
     
-    treatCategoricalFeatures(header_, records_list_)
+    header, records_list = treatCategoricalFeatures(header_,\
+        records_list_)
     
     
     
