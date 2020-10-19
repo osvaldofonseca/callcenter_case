@@ -101,9 +101,6 @@ def treatSpecificCategoricalFeature(feature, header, records_list,\
         new_record = record[:feat_position] + category_encoding +\
                 record[feat_position+1:]
         new_records_list.append(new_record)
-        # print("---")
-        # print(record)
-        # print(new_record)
 
     return (new_header, new_records_list)
 
@@ -115,57 +112,116 @@ def treatCategoricalFeatures(header, records_list):
     feat_name = "estado_civil"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    # print(header)
-    # print(len(header))
     
     # treat the feature "profissao"
     feat_name = "profissao"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    # print(header)
-    # print(len(header))
 
     # treat the feature "educacao"
     feat_name = "educacao"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    # print(header)
-    # print(len(header))
 
     # treat the feature "campanha_anterior"
     feat_name = "campanha_anterior"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    # print(header)
-    # print(len(header))
 
     # treat the feature "mes"
     feat_name = "mes"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    # print(header)
-    # print(len(header))
     
     # treat the feature "dia_da_semana"
     feat_name = "dia_da_semana"
     header, records_list = treatSpecificCategoricalFeature(feat_name,\
             header, records_list, categories_by_feat)
-    # print(header)
-    # print(len(header))
 
     return (header, records_list)
 
-def normalizeNumericFeatures():
+# treat a special case of the feature "dias_ultimo_contato"
+def treatAnomalyNumericFeature(header, records_list,\
+            categories_by_feat):
+
+    feature = "dias_ultimo_contato"
+    
+    feat_position = getFeaturePosition(header, feature)
+        
+    for record in records_list:
+        feat_value = int(record[feat_position])
+        if feat_value == 999:
+            record[feat_position] = 54
+
+def normalizeSpecificNumericFeature(feature, header, records_list,\
+            categories_by_feat, negative=False):
+    
+    feat_values = list(categories_by_feat[feature])
+    feat_values = [float(x) for x in feat_values]
+    min_value = min(feat_values)
+    max_value = max(feat_values)
+    if negative == True:
+        aux = min_value
+        min_value = max_value*-1
+        max_value = aux*-1
+    
+    # treat anomaly exception
+    if feature == "dias_ultimo_contato":
+        max_value = 54
+
+    feat_position = getFeaturePosition(header, feature)
+        
+    for record in records_list:
+        feat_value = float(record[feat_position])
+        if negative == True:
+            feat_value = feat_value*-1
+        feat_norm = (feat_value-min_value)/(max_value-min_value)
+        record[feat_position] = feat_norm
+
+def normalizeNumericFeatures(header, records_list):
 
     categories_by_feat = getCategoriesByFeature()
 
     # treat the feature "idade"
     feat_name = "idade"
-    feat_values = list(categories_by_feat[feat_name])
-    min_value = min(feat_values)
-    max_value = max(feat_values)
-    print(min_value, max_value) 
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
 
+    # treat the feature "duracao"
+    feat_name = "duracao"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
+
+    # treat the feature "qtd_contatos_campanha"
+    feat_name = "qtd_contatos_campanha"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
+
+    # treat the feature "dias_ultimo_contato"
+    treatAnomalyNumericFeature(header, records_list, categories_by_feat)
+    feat_name = "dias_ultimo_contato"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
+
+    # treat the feature "qtd_contatos_total"
+    feat_name = "qtd_contatos_total"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
+
+    # treat the feature "indice_precos_consumidor"
+    feat_name = "indice_precos_consumidor"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
+
+    # treat the feature "indice_confianca_consumidor"
+    feat_name = "indice_confianca_consumidor"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat, True)
+
+    # treat the feature "indice_confianca_consumidor"
+    feat_name = "taxa_juros_media"
+    normalizeSpecificNumericFeature(feat_name, header, records_list,\
+            categories_by_feat)
 
 
 def dumpDatasetBasedOnTransformedRecords(output_file, header,\
@@ -183,13 +239,13 @@ def dumpDatasetBasedOnTransformedRecords(output_file, header,\
 
 if __name__ == "__main__":
 
-    header_, records_list_ = readDatabase("data/callcenter_case_no-inadimplente_no-missing.csv")
+    header, records_list = readDatabase("data/callcenter_case_fixed.csv")
     # treatCategoricalBinaryFeatures(header_, records_list_)
     # feat_name = "estado_civil"
     
     # header, records_list = treatCategoricalFeatures(header_,\
     #     records_list_)
-    normalizeNumericFeatures()
+    normalizeNumericFeatures(header, records_list)
     
     
     

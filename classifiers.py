@@ -1,4 +1,6 @@
 import numpy as np
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_score, cross_validate
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
@@ -24,7 +26,8 @@ def getCompleteData(header, records_list):
     case_data = []
     case_target = []
     for record in records_list:
-        data = record[:1]
+        data = record[:-1]
+        data = [float(x) for x in data]
         target = record[-1]
         case_data.append(data)
         case_target.append(target)
@@ -37,6 +40,7 @@ def getDataFromBestKFeaturesSelection(header, records_list, kv=20):
     case_target = []
     for record in records_list:
         data = record[:-1]
+        data = [float(x) for x in data]
         target = record[-1]
         case_data.append(data)
         case_target.append(target)
@@ -68,7 +72,8 @@ def runRandomForest(case_data, case_target, max_depth_value):
 def runSVM(case_data, case_target, kernel_value, c_value):
 
     scoring_metrics = ["accuracy", "recall_macro", "f1_macro", "precision_macro"]
-    clf = SVC(kernel=kernel_value, C=c_value)
+    clf = SVC(kernel=kernel_value, C=c_value, cache_size=1000)
+    #clf = make_pipeline(StandardScaler(), SVC(kernel=kernel_value, C=c_value, cache_size=1000))
     scores = cross_validate(clf, case_data, case_target, cv=10,\
             scoring=scoring_metrics)
 
@@ -86,23 +91,6 @@ def runDecisionTree(header, records_list):
 
     clf = DecisionTreeClassifier()
     print(cross_val_score(clf, case_data, case_target, cv=2))
-
-# def runRandomForest(header, records_list):
-
-#     case_data = []
-#     case_target = []
-#     for record in records_list:
-#         data = record[:-1]
-#         target = record[-1]
-#         case_data.append(data)
-#         case_target.append(target)
-
-#     scoring_metrics = ["accuracy", "recall_macro", "f1_macro", "precision_macro"]
-#     clf = RandomForestClassifier(n_estimators=100, max_depth=2)
-#     scores = cross_validate(clf, case_data, case_target, cv=5,\
-#             scoring=scoring_metrics)
-    
-#     informScoresInfo(scores)
 
 def selectBestFeatures(header, records_list):
 
@@ -123,8 +111,12 @@ def selectBestFeatures(header, records_list):
 if __name__ == "__main__":
     input_file = "data/callcenter_case_fixed.csv"
     header, records_list = readDatabase(input_file)
+    case_data, case_target = getCompleteData(header, records_list)
     #runDecisionTree(header, records_list)
-    #runSVM(header, records_list)   
+    c_values = [0.1, 1, 10, 100]
+    for c_value in c_values:
+        print("Using C: ", c_value)
+        runSVM(case_data, case_target, 'sigmoid', c_value)   
     #selectBestFeatures(header, records_list)
     #runRandomForest(header, records_list)
 
