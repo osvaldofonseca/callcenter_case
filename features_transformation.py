@@ -155,6 +155,19 @@ def treatCategoricalFeatures(header, records_list):
 
     return (header, records_list)
 
+def normalizeNumericFeatures():
+
+    categories_by_feat = getCategoriesByFeature()
+
+    # treat the feature "idade"
+    feat_name = "idade"
+    feat_values = list(categories_by_feat[feat_name])
+    min_value = min(feat_values)
+    max_value = max(feat_values)
+    print(min_value, max_value) 
+
+
+
 def dumpDatasetBasedOnTransformedRecords(output_file, header,\
         records_list):
     
@@ -171,11 +184,12 @@ def dumpDatasetBasedOnTransformedRecords(output_file, header,\
 if __name__ == "__main__":
 
     header_, records_list_ = readDatabase("data/callcenter_case_no-inadimplente_no-missing.csv")
-    treatCategoricalBinaryFeatures(header_, records_list_)
-    feat_name = "estado_civil"
+    # treatCategoricalBinaryFeatures(header_, records_list_)
+    # feat_name = "estado_civil"
     
-    header, records_list = treatCategoricalFeatures(header_,\
-        records_list_)
+    # header, records_list = treatCategoricalFeatures(header_,\
+    #     records_list_)
+    normalizeNumericFeatures()
     
     
     

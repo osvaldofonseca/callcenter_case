@@ -65,10 +65,10 @@ def runRandomForest(case_data, case_target, max_depth_value):
     informScoresInfo(scores)
 
 
-def runSVM(case_data, case_target, kernel_value):
+def runSVM(case_data, case_target, kernel_value, c_value):
 
     scoring_metrics = ["accuracy", "recall_macro", "f1_macro", "precision_macro"]
-    clf = SVC(kernel=kernel_value)
+    clf = SVC(kernel=kernel_value, C=c_value)
     scores = cross_validate(clf, case_data, case_target, cv=10,\
             scoring=scoring_metrics)
 
