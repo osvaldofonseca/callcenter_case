@@ -59,13 +59,6 @@ def treatCategoricalBinaryFeatures(header, records_list):
     treatSpecificBinaryFeature(feat_name, header, records_list,\
             replace_mapping)
     
-    # treat the feature "aderencia_campanha"
-    # feat_name = "aderencia_campanha"
-    # replace_mapping = dict()
-    # replace_mapping["nao"] = 0
-    # replace_mapping["sim"] = 1
-    # treatSpecificBinaryFeature(feat_name, header, records_list,\
-    #         replace_mapping)
 
 def getCategoriesByFeature():
 
@@ -240,11 +233,6 @@ def dumpDatasetBasedOnTransformedRecords(output_file, header,\
 if __name__ == "__main__":
 
     header, records_list = readDatabase("data/callcenter_case_fixed.csv")
-    # treatCategoricalBinaryFeatures(header_, records_list_)
-    # feat_name = "estado_civil"
-    
-    # header, records_list = treatCategoricalFeatures(header_,\
-    #     records_list_)
     normalizeNumericFeatures(header, records_list)
     
     

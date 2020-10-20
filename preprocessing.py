@@ -76,6 +76,8 @@ def featureDistribution(feat_position):
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
 
+    len(fig)
+
 def removeSpecificFeature(feat_position, input_file, output_file):
 
     f_in = open(input_file, "r")

@@ -126,7 +126,6 @@ def runNaiveBayes(case_data, case_target, conf_mat_flag=False):
         print(conf_mat)
 
 
-
 def runDecisionTree(header, records_list):
 
     case_data = []
@@ -155,35 +154,4 @@ def selectBestFeatures(header, records_list):
 
     clf = DecisionTreeClassifier()
     print(np.mean(cross_val_score(clf, new_case_data, case_target, cv=100)))
-
-
-
-if __name__ == "__main__":
-    input_file = "data/callcenter_case_fixed_normalized.csv"
-    header, records_list = readDatabase(input_file)
-    #case_data, case_target = getCompleteData(header, records_list)
-    case_data, case_target = getDataFromBestKFeaturesSelection(header, records_list, 5, True)
-    #runDecisionTree(header, records_list)
-    # c_values = [0.1, 1, 10, 100]
-    # for c_value in c_values:
-    #     print("Using C: ", c_value)
-    #     runSVM(case_data, case_target, 'sigmoid', c_value)
-    
-    # runSVM(case_data, case_target, 'linear', 1)   
-    #selectBestFeatures(header, records_list)
-    # runRandomForest(case_data, case_target, 1)
-    kernel_value = 'sigmoid'
-    c_value = 0.01
-    clf = SVC(kernel=kernel_value, C=c_value, cache_size=1000)
-    numeric_case_target = []
-    for t in case_target:
-        if t == 'sim':
-            numeric_case_target.append(float(1))
-        else:
-            numeric_case_target.append(float(0))
-    y_pred = cross_val_predict(clf, case_data, case_target, cv=10)
-    conf_mat = confusion_matrix(case_target, y_pred)
-    others = precision_recall_fscore_support(case_target, y_pred)
-    print(conf_mat)
-    print(others)
 
